@@ -2,7 +2,9 @@
 
 `biba` is a command-line timeline compositor for 9:16 vertical video (`1080x1920`, `30 fps`, H.264/AAC). It decodes local video clips over FFmpeg pipes, renders 2D text and card overlays with Pillow into a pre-allocated frame buffer, and mixes external audio or offline speech narration at `48 kHz` stereo.
 
-## Preview
+![biba split-screen demo: JSON timeline and CLI on the left, rendered 9:16 video on the right](assets/demo_split_preview.gif)
+
+## Section Breakdown
 
 | Section 1-2 | Section 3-5 |
 | :---: | :---: |
