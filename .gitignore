@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.egg-info/
+.DS_Store
+output/
+*.mp4
+*.mov
+*.wav
+*.aiff
