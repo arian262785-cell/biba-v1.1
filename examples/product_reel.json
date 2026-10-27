@@ -1,0 +1,95 @@
+{
+  "reel_id": "product_reel",
+  "output_filename": "product_reel.mp4",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "cuts": [
+    0,
+    75,
+    234,
+    420,
+    585,
+    720
+  ],
+  "accent_color": [
+    64,
+    224,
+    208
+  ],
+  "use_local_macos_tts": true,
+  "external_audio_path": null,
+  "voice_segments": [
+    "Biba is a command line timeline compositor for vertical video.",
+    "It decodes local video clips over FFmpeg pipes and layers 2D cards in Pillow.",
+    "Audio can be loaded from an external file or synthesized at forty-eight kilohertz.",
+    "All timeline sections, text fields, and media paths are configured in a JSON file.",
+    "Run biba render with your timeline file to export an H.264 MP4."
+  ],
+  "hook_kicker": "BIBA v1.1 - TIMELINE COMPOSITOR",
+  "hook_line1": "VERTICAL",
+  "hook_line2": "VIDEO BUILD.",
+  "hook_sub": "Assemble 9:16 clips from JSON timelines.",
+  "video_plate_act1": "",
+  "photo_plate_act1": "",
+  "step1_title": "Timeline Input",
+  "step1_sub": "Pass a JSON timeline or media paths on the CLI.",
+  "terminal_cmd": "biba render examples/product_reel.json -o output/reel.mp4",
+  "terminal_lines": [
+    "input: examples/product_reel.json",
+    "video: 1080x1920 @ 30 fps (rgb24 pipe)",
+    "audio: 48000 Hz stereo PCM -> AAC 256k",
+    "encoder: libx264 (high, crf 16)",
+    "status: complete"
+  ],
+  "video_plate_act2": "",
+  "photo_plate_act2": "",
+  "step2_title": "Pipeline Stages",
+  "step2_sub": "Streaming frame decode, 2D overlay pass, and H.264 encode.",
+  "chip_tags": [
+    "FFmpeg Pipe",
+    "Pillow RGBA",
+    "NumPy STFT",
+    "48 kHz Audio"
+  ],
+  "check_items": [
+    "Streaming RGB24 video clip decoder",
+    "Pre-allocated frame buffer to FFmpeg stdin",
+    "External WAV/MP3 import or synthesized backing track",
+    "Clause-segmented offline narration with STFT smoothing"
+  ],
+  "video_plate_act3": "",
+  "photo_plate_act3": "",
+  "step3_title": "Configuration",
+  "step3_sub": "Use JSON timelines for repeatable builds.",
+  "chat_pairs": [
+    [
+      "user",
+      "How do I pass my own video clips and audio?"
+    ],
+    [
+      "ai",
+      "Set the plate paths in your JSON file or pass --video and --audio."
+    ],
+    [
+      "user",
+      "What happens if no video clip is provided?"
+    ],
+    [
+      "ai",
+      "The compositor generates a procedural color field background."
+    ]
+  ],
+  "device_headline1": "biba",
+  "device_headline2": "v1.1",
+  "device_sub": "9:16 timeline compositor.",
+  "video_plate_act4": "",
+  "photo_plate_act4": "",
+  "payoff_top1": "JSON TIMELINE.",
+  "payoff_top2": "DIRECT MP4.",
+  "cta_line1": "Run biba init to generate a template",
+  "cta_line2": "and render your own 9:16 video.",
+  "cta_pill": "github.com/arian262785-cell/biba-v1.1",
+  "video_plate_act5": "",
+  "photo_plate_act5": ""
+}
