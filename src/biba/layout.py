@@ -40,18 +40,38 @@ def prog(f: int, start: int, dur: int) -> float:
     return clamp((f - start) / max(1, dur))
 
 
-def load_sans(size: int, idx: int = 1) -> ImageFont.FreeTypeFont:
+def load_sans(size: int, idx: int = 1) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     try:
         return ImageFont.truetype(HN_PATH, size, index=idx)
     except Exception:
-        return ImageFont.truetype(SFNS_PATH, size)
+        pass
+    for fallback in (
+        SFNS_PATH,
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "DejaVuSans.ttf",
+    ):
+        try:
+            return ImageFont.truetype(fallback, size)
+        except Exception:
+            continue
+    return ImageFont.load_default(size=size)
 
 
-def load_mono(size: int) -> ImageFont.FreeTypeFont:
-    try:
-        return ImageFont.truetype(MONO_PATH, size)
-    except Exception:
-        return ImageFont.truetype(SFNS_PATH, size)
+def load_mono(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    for candidate in (
+        MONO_PATH,
+        SFNS_PATH,
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf",
+        "DejaVuSansMono.ttf",
+    ):
+        try:
+            return ImageFont.truetype(candidate, size)
+        except Exception:
+            continue
+    return ImageFont.load_default(size=size)
 
 
 F_HOOK = load_sans(118, 9)
