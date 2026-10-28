@@ -12,11 +12,20 @@ from biba.audio import build_audio_track, split_clauses, stft_formant_smooth
 from biba.cli import build_default_timeline, main
 from biba.compositor import ReelCompositor
 from biba.decoder import VideoStreamReader
-from biba.layout import render_color_field
+from biba.layout import quantize_sub_lsb_dither, render_color_field
 from biba.spec import ReelTimeline
 
 
 class TestBibaPackage(unittest.TestCase):
+    def test_sub_lsb_dither_quantization(self) -> None:
+        ramp = np.linspace(10.0, 200.0, 32 * 32 * 3, dtype=np.float32).reshape(32, 32, 3)
+        u8_f0 = quantize_sub_lsb_dither(ramp, amplitude=0.5, seed=42)
+        u8_f1 = quantize_sub_lsb_dither(ramp, amplitude=0.5, seed=43)
+        self.assertEqual(u8_f0.dtype, np.uint8)
+        self.assertEqual(u8_f0.shape, (32, 32, 3))
+        self.assertTrue(np.allclose(u8_f0.astype(np.float32), ramp, atol=1.0))
+        self.assertFalse(np.array_equal(u8_f0, u8_f1))
+
     def test_timeline_json_roundtrip(self) -> None:
         tl = build_default_timeline()
         with tempfile.TemporaryDirectory() as tmp:

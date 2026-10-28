@@ -17,9 +17,9 @@ src/biba/
   __init__.py
   spec.py        # ReelTimeline dataclass and JSON loader/serializer
   decoder.py     # FFmpeg rawvideo stream reader and external audio decoder
-  layout.py      # 2D card geometry, font loading, easing, color field fallback
+  layout.py      # 2D card geometry, font loader, and temporal TPDF dithered color field
   audio.py       # 48 kHz stereo mixer, STFT formant smoothing, piper/OS TTS
-  compositor.py  # 5-section vertical frame compositor and H.264 pipe writer
+  compositor.py  # 5-section vertical frame compositor and H.264 pipe writer (-g 60 -bf 2 -aq-mode 3)
   cli.py         # CLI entry point (init, render, probe)
 examples/
   product_reel.json

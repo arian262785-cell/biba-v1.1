@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 from typing import Tuple
 import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
@@ -38,6 +39,19 @@ def lerp(a: float, b: float, t: float) -> float:
 
 def prog(f: int, start: int, dur: int) -> float:
     return clamp((f - start) / max(1, dur))
+
+
+def quantize_sub_lsb_dither(
+    field_f32: np.ndarray,
+    amplitude: float = 0.5,
+    seed: int = 42,
+) -> np.ndarray:
+    """Applies monochromatic triangular PDF (TPDF) sub-LSB dither before rounding float32 RGB arrays to uint8."""
+    arr = np.asarray(field_f32, dtype=np.float32)
+    rng = np.random.default_rng(seed)
+    dither_shape = arr.shape[:2] + ((1,) if arr.ndim == 3 else ())
+    tpdf = (rng.random(dither_shape, dtype=np.float32) - rng.random(dither_shape, dtype=np.float32)) * amplitude
+    return np.clip(np.rint(arr + tpdf), 0.0, 255.0).astype(np.uint8)
 
 
 def load_sans(size: int, idx: int = 1) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -99,26 +113,23 @@ def render_color_field(
     accent: Tuple[int, int, int] = TEAL,
 ) -> Image.Image:
     t = float(frame_idx) / float(FPS)
-    h_grid, w_grid = 270, 540
-    y = np.linspace(-1.0, 1.0, h_grid, dtype=np.float32)[:, None]
-    x = np.linspace(-1.0, 1.0, w_grid, dtype=np.float32)[None, :]
+    y = np.linspace(-1.0, 1.0, target_h, dtype=np.float32)[:, None]
+    x = np.linspace(-1.0, 1.0, target_w, dtype=np.float32)[None, :]
 
     r2 = x * x + y * y
     w1 = np.sin(x * 6.5 + t * 2.2) * np.cos(y * 5.0 - t * 1.7)
     w2 = np.sin(np.sqrt(r2 + 0.04) * 11.0 - t * 3.4)
     glow = np.exp(-r2 * 1.85) * (0.65 + 0.35 * np.sin(t * 1.9))
-    field = np.clip(0.5 + 0.28 * w1 + 0.22 * w2 + 0.45 * glow, 0.0, 1.0)
+    field = np.clip(0.5 + 0.28 * w1 + 0.22 * w2 + 0.35 * glow, 0.0, 1.0)
 
     ar, ag, ab = accent[0] / 255.0, accent[1] / 255.0, accent[2] / 255.0
     ch_r = np.clip((0.04 + field * ar * 0.85 + glow * 0.25) * 255.0, 0.0, 255.0)
     ch_g = np.clip((0.07 + field * ag * 0.90 + glow * 0.30) * 255.0, 0.0, 255.0)
     ch_b = np.clip((0.12 + field * ab * 0.95 + glow * 0.35) * 255.0, 0.0, 255.0)
 
-    rgb = np.stack([ch_r, ch_g, ch_b], axis=-1).astype(np.uint8)
-    img = Image.fromarray(rgb, mode="RGB")
-    if (img.width, img.height) != (target_w, target_h):
-        img = img.resize((target_w, target_h), Image.Resampling.BICUBIC)
-    return img
+    rgb_f32 = np.stack([ch_r, ch_g, ch_b], axis=-1)
+    rgb = quantize_sub_lsb_dither(rgb_f32, amplitude=0.5, seed=42 + int(frame_idx))
+    return Image.fromarray(rgb, mode="RGB")
 
 
 def draw_shadow_text(
